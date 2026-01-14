@@ -1913,7 +1913,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_calc_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_calc_en-us.html"
   },
   "client_calc_zh-cn": {
     "slug": "client_calc_zh-cn",
@@ -3829,7 +3829,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_calc_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_calc_zh-cn.html"
   },
   "client_exec_en-us": {
     "slug": "client_exec_en-us",
@@ -8452,7 +8452,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_exec_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_exec_en-us.html"
   },
   "client_exec_zh-cn": {
     "slug": "client_exec_zh-cn",
@@ -13032,7 +13032,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_exec_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_exec_zh-cn.html"
   },
   "client_flow_en-us": {
     "slug": "client_flow_en-us",
@@ -13072,7 +13072,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_flow_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_flow_en-us.html"
   },
   "client_flow_zh-cn": {
     "slug": "client_flow_zh-cn",
@@ -13112,7 +13112,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_flow_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_flow_zh-cn.html"
   },
   "client_other_en-us": {
     "slug": "client_other_en-us",
@@ -13190,7 +13190,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_other_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_other_en-us.html"
   },
   "client_other_zh-cn": {
     "slug": "client_other_zh-cn",
@@ -13216,7 +13216,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_other_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_other_zh-cn.html"
   },
   "client_query_en-us": {
     "slug": "client_query_en-us",
@@ -15375,7 +15375,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_query_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_query_en-us.html"
   },
   "client_query_zh-cn": {
     "slug": "client_query_zh-cn",
@@ -17534,7 +17534,7 @@
         ]
       }
     ],
-    "source": "node_docs\\client_query_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/client_query_zh-cn.html"
   },
   "server_calc_en-us": {
     "slug": "server_calc_en-us",
@@ -20491,7 +20491,7 @@
         ]
       }
     ],
-    "source": "node_docs\\server_calc_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_calc_en-us.html"
   },
   "server_calc_zh-cn": {
     "slug": "server_calc_zh-cn",
@@ -23447,7 +23447,7 @@
         ]
       }
     ],
-    "source": "node_docs\\server_calc_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_calc_zh-cn.html"
   },
   "server_event_en-us": {
     "slug": "server_event_en-us",
@@ -27297,9 +27297,88 @@
             ]
           }
         ]
+      },
+      {
+        "title": "XXVI. Creation Preset Status",
+        "nodes": [
+          {
+            "raw_title": "When Complex Creation Preset Status Changes",
+            "name": "When Complex Creation Preset Status Changes",
+            "ordinal": null,
+            "images": [
+              "https://act-webstatic.mihoyo.com/ugc-tutorial/knowledge/cn/en-us/mh9ji0030dzs/aee82862-ac8d-4116-ae5f-25ffc0c469ec.png"
+            ],
+            "functions": [
+              "This event is triggered when the preset state of a complex creation is changed using the \"Set the preset status value of the complex creation\" node (the modified and unmodified values ​​must be different for this event to trigger).",
+              "This node graph event can only be received by the node graph of the complex creation."
+            ],
+            "parameters": [
+              {
+                "io": "Output Parameter",
+                "name": "Event Source Entity",
+                "data_type": "Entity",
+                "description": "Complex Creation Entity",
+                "raw": {
+                  "Parameter Type": "Output Parameter",
+                  "Parameter Name": "Event Source Entity",
+                  "Type": "Entity",
+                  "Description": "Complex Creation Entity"
+                }
+              },
+              {
+                "io": "Output Parameter",
+                "name": "Event Source Entity GUID",
+                "data_type": "GUID",
+                "description": "Complex Creation GUID",
+                "raw": {
+                  "Parameter Type": "Output Parameter",
+                  "Parameter Name": "Event Source Entity GUID",
+                  "Type": "GUID",
+                  "Description": "Complex Creation GUID"
+                }
+              },
+              {
+                "io": "Output Parameter",
+                "name": "Preset Status Index",
+                "data_type": "Integer",
+                "description": "",
+                "raw": {
+                  "Parameter Type": "Output Parameter",
+                  "Parameter Name": "Preset Status Index",
+                  "Type": "Integer",
+                  "Description": ""
+                }
+              },
+              {
+                "io": "Output Parameter",
+                "name": "Pre-Change Value",
+                "data_type": "Integer",
+                "description": "",
+                "raw": {
+                  "Parameter Type": "Output Parameter",
+                  "Parameter Name": "Pre-Change Value",
+                  "Type": "Integer",
+                  "Description": ""
+                }
+              },
+              {
+                "io": "Output Parameter",
+                "name": "Post-Change Value",
+                "data_type": "Integer",
+                "description": "",
+                "raw": {
+                  "Parameter Type": "Output Parameter",
+                  "Parameter Name": "Post-Change Value",
+                  "Type": "Integer",
+                  "Description": ""
+                }
+              }
+            ]
+          }
+        ]
       }
     ],
-    "source": "node_docs\\server_event_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_event_en-us.html"
   },
   "server_event_zh-cn": {
     "slug": "server_event_zh-cn",
@@ -31228,7 +31307,7 @@
         ]
       }
     ],
-    "source": "node_docs\\server_event_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_event_zh-cn.html"
   },
   "server_exec_en-us": {
     "slug": "server_exec_en-us",
@@ -32246,6 +32325,48 @@
                   "Parameter Name": "Environment Time Passage Speed",
                   "Type": "Floating Point Numbers",
                   "Description": "Clamped to the range 0–60. Values outside this range are automatically set to 0 or 60"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "VII. Faction Related",
+        "nodes": [
+          {
+            "raw_title": "Set Entity Faction",
+            "name": "Set Entity Faction",
+            "ordinal": null,
+            "images": [
+              "https://act-webstatic.mihoyo.com/ugc-tutorial/knowledge/cn/en-us/mhrgq1iit178/5acf0ad8-e4ff-41af-957e-4f7c895b1dd0.png"
+            ],
+            "functions": [
+              "Set the faction of the specified target entity."
+            ],
+            "parameters": [
+              {
+                "io": "Input Parameter",
+                "name": "Target Entity",
+                "data_type": "Entity",
+                "description": "Entity whose faction is to be edited",
+                "raw": {
+                  "Parameter Type": "Input Parameter",
+                  "Parameter Name": "Target Entity",
+                  "Type": "Entity",
+                  "Description": "Entity whose faction is to be edited"
+                }
+              },
+              {
+                "io": "Input Parameter",
+                "name": "Faction",
+                "data_type": "Faction",
+                "description": "Edited Faction",
+                "raw": {
+                  "Parameter Type": "Input Parameter",
+                  "Parameter Name": "Faction",
+                  "Type": "Faction",
+                  "Description": "Edited Faction"
                 }
               }
             ]
@@ -40187,7 +40308,7 @@
         ]
       }
     ],
-    "source": "node_docs\\server_exec_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_exec_en-us.html"
   },
   "server_exec_zh-cn": {
     "slug": "server_exec_zh-cn",
@@ -49182,7 +49303,7 @@
         ]
       }
     ],
-    "source": "node_docs\\server_exec_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_exec_zh-cn.html"
   },
   "server_flow_en-us": {
     "slug": "server_flow_en-us",
@@ -49248,7 +49369,7 @@
         ]
       }
     ],
-    "source": "node_docs\\server_flow_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_flow_en-us.html"
   },
   "server_flow_zh-cn": {
     "slug": "server_flow_zh-cn",
@@ -49314,7 +49435,7 @@
         ]
       }
     ],
-    "source": "node_docs\\server_flow_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_flow_zh-cn.html"
   },
   "server_query_en-us": {
     "slug": "server_query_en-us",
@@ -49326,11 +49447,14 @@
         "title": "I. General",
         "nodes": [
           {
-            "raw_title": "1. Query Match Mode and Player Count",
-            "name": "Query Match Mode and Player Count",
-            "ordinal": 1,
+            "raw_title": "Query Game Mode and Player Number",
+            "name": "Query Game Mode and Player Number",
+            "ordinal": null,
+            "images": [
+              "https://act-webstatic.mihoyo.com/ugc-tutorial/knowledge/cn/en-us/mhrm9yin7qsc/1e946aa2-4367-4b69-a494-dfea96b3b0c3.png"
+            ],
             "functions": [
-              "Queries the theoretical number of players who entered the match, i.e., players who joined via matchmaking or custom rooms, and the way they entered."
+              "Searches the theoretical number of players entering the match, including players via Matchmaking or Room creation, and the method of entry"
             ],
             "parameters": [
               {
@@ -49347,14 +49471,14 @@
               },
               {
                 "io": "Output Parameter",
-                "name": "Play Mode",
+                "name": "Gameplay Mode",
                 "data_type": "Enumeration",
-                "description": "Trial, Room, or Matchmaking",
+                "description": "Includes Playtest, Room Play, and Matchmaking Play",
                 "raw": {
                   "Parameter Type": "Output Parameter",
-                  "Parameter Name": "Play Mode",
+                  "Parameter Name": "Gameplay Mode",
                   "Type": "Enumeration",
-                  "Description": "Trial, Room, or Matchmaking"
+                  "Description": "Includes Playtest, Room Play, and Matchmaking Play"
                 }
               }
             ]
@@ -52880,21 +53004,24 @@
         "title": "XVI. Unit Status",
         "nodes": [
           {
-            "raw_title": "1. Query Unit Status Slot Indices",
-            "name": "Query Unit Status Slot Indices",
-            "ordinal": 1,
+            "raw_title": "List of Slot IDs Querying Unit Status",
+            "name": "List of Slot IDs Querying Unit Status",
+            "ordinal": null,
+            "images": [
+              "https://act-webstatic.mihoyo.com/ugc-tutorial/knowledge/cn/en-us/mhrm9yin7qsc/ada1d590-1ba7-4d6a-bf5b-674c60c07647.png"
+            ],
             "functions": [
-              "Queries every slot index for the specified unit status configuration on the target entity."
+              "Searches the list of all Slot IDs for the Unit Status with the specified Config ID on the Target Entity"
             ],
             "parameters": [
               {
                 "io": "Input Parameter",
-                "name": "Target Entity",
+                "name": "Query Target Entity",
                 "data_type": "Entity",
                 "description": "",
                 "raw": {
                   "Parameter Type": "Input Parameter",
-                  "Parameter Name": "Target Entity",
+                  "Parameter Name": "Query Target Entity",
                   "Type": "Entity",
                   "Description": ""
                 }
@@ -52913,12 +53040,12 @@
               },
               {
                 "io": "Output Parameter",
-                "name": "Slot Index List",
+                "name": "Slot ID List",
                 "data_type": "Integer List",
                 "description": "",
                 "raw": {
                   "Parameter Type": "Output Parameter",
-                  "Parameter Name": "Slot Index List",
+                  "Parameter Name": "Slot ID List",
                   "Type": "Integer List",
                   "Description": ""
                 }
@@ -55974,7 +56101,7 @@
         ]
       }
     ],
-    "source": "node_docs\\server_query_en-us.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_query_en-us.html"
   },
   "server_query_zh-cn": {
     "slug": "server_query_zh-cn",
@@ -62639,10 +62766,10 @@
         ]
       }
     ],
-    "source": "node_docs\\server_query_zh-cn.html"
+    "source": "/mnt/d/_S2/mypy_test/node_docs/server_query_zh-cn.html"
   },
   "__summary__": {
     "doc_count": 20,
-    "node_count": 1131
+    "node_count": 1133
   }
 }
