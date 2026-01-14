@@ -295,6 +295,7 @@ const ENTITY_HELPER_ALIAS_SOURCES = {
   defaultAggroList: 'getAggroListOfCreationInDefaultMode',
   characters: 'getAllCharacterEntitiesOfSpecifiedPlayer',
   activeCharacter: 'getActiveCharacterOfSpecifiedPlayer',
+  classicModeId: 'checkClassicModeCharacterId',
   class: 'queryPlayerClass',
   classLevel: 'queryPlayerClassLevel',
   inputDevice: 'getPlayerClientInputDeviceType'
@@ -320,6 +321,8 @@ const ENTITY_HELPER_METHOD_ALIAS_SOURCES = {
   isInCombat: 'queryIfSpecifiedEntityIsInCombat',
   getPreset: 'getPresetStatus',
   setPreset: 'setPresetStatus',
+  getCreationPresetValue: 'getThePresetStatusValueOfTheComplexCreation',
+  setCreationPresetValue: 'setThePresetStatusValueOfTheComplexCreation',
   hasUnitStatus: 'queryIfEntityHasUnitStatus',
   teleport: 'teleportPlayer',
   revive: 'reviveCharacter',
@@ -354,6 +357,8 @@ const ENTITY_HELPER_METHOD_ALIAS_SOURCES = {
   scaleSkillCd: 'modifySkillCdPercentageBasedOnMaxCd',
   addSkillResource: 'modifySkillResourceAmount',
   setSkillResource: 'setSkillResourceAmount',
+  addElementalEnergy: 'increasesCharacterSElementalEnergy',
+  setElementalEnergy: 'setCharacterSElementalEnergy',
   playSfx2d: 'playerPlaysOneShot2dSoundEffect',
   getSkill: 'queryCharacterSkill',
   getGiftBoxConsumption: 'queryCorrespondingGiftBoxConsumption',
@@ -418,6 +423,7 @@ const ENTITY_HELPER_KIND_BY_KEY = {
   changePlayerClass: ['player'],
   changePlayerSCurrentClassLevel: ['player'],
   checkClassicModeCharacterId: ['character'],
+  classicModeId: ['character'],
   checkEntitySElementalEffectStatus: ['player', 'character', 'stage', 'object', 'creation'],
   character: ['player'],
   characterAttr: ['character'],
@@ -515,6 +521,7 @@ const ENTITY_HELPER_KIND_BY_KEY = {
   getPlayerSettlementRankingValue: ['player'],
   getPlayerSettlementSuccessStatus: ['player'],
   getPreset: ['player', 'character', 'stage', 'object', 'creation'],
+  getCreationPresetValue: ['creation'],
   getPresetStatus: ['player', 'character', 'stage', 'object', 'creation'],
   getTheAggroListOfTheSpecifiedEntity: ['player', 'character', 'stage', 'object', 'creation'],
   getTheAggroTargetOfTheSpecifiedEntity: ['player', 'character', 'stage', 'object', 'creation'],
@@ -653,6 +660,7 @@ const ENTITY_HELPER_KIND_BY_KEY = {
   setPlayerSettlementScoreboardDataDisplay: ['player'],
   setPlayerSettlementSuccessStatus: ['player'],
   setPreset: ['player', 'character', 'stage', 'object', 'creation'],
+  setCreationPresetValue: ['creation'],
   setPresetStatus: ['player', 'character', 'stage', 'object', 'creation'],
   setRankScoreChange: ['player'],
   setScanComponentSActiveScanTagId: ['player', 'character', 'stage', 'object', 'creation'],
@@ -690,6 +698,8 @@ const ENTITY_HELPER_KIND_BY_KEY = {
   addSkill: ['character'],
   addSkillCd: ['character'],
   addSkillResource: ['character'],
+  addElementalEnergy: ['character'],
+  setElementalEnergy: ['character'],
   areAllCharactersDown: ['player'],
   closeDeck: ['player'],
   disableRevivePoint: ['player'],
@@ -4808,6 +4818,21 @@ interface EntityHelperAliases {
   readonly activeCharacter: AliasReturn<'activeCharacter'>
 
   /**
+   * Available only in Classic Mode. Returns the Character ID for the target character
+   *
+   * 查询经典模式角色编号: 仅经典模式可用，查询指定角色的角色编号
+   *
+   * @returns
+   *
+   * 角色编号
+   *
+   * Property: classic mode character ID.
+   *
+   * 属性: 经典模式角色编号。
+   */
+  readonly classicModeId: AliasReturn<'classicModeId'>
+
+  /**
    * Returns the first Character Entity of the Player (index 0).
    *
    * 获取玩家的首个角色实体: 返回玩家角色列表中的第一个角色实体（索引0）
@@ -5107,6 +5132,35 @@ interface EntityHelperMethodAliases {
    * 预设状态值: 一般“0”为关闭，“1”为开启
    */
   setPreset: (presetStatusIndex: IntValue, presetStatusValue: IntValue) => void
+
+  /**
+   * Returns the preset status value of the specified complex creation
+   *
+   * 获取复杂造物的预设状态值: 查询指定复杂造物的预设状态值
+   *
+   * @param presetStatusIndex
+   *
+   * 预设状态索引
+   *
+   * @returns
+   *
+   * 预设状态值
+   */
+  getCreationPresetValue: (presetStatusIndex: IntValue) => bigint
+
+  /**
+   * You can set the preset state value for a specified preset state index of a complex creation
+   *
+   * 设置复杂造物预设状态值: 设置复杂造物指定预设状态索引的值
+   *
+   * @param presetStatusIndex
+   *
+   * 预设状态索引
+   * @param presetStatusValue
+   *
+   * 预设状态值
+   */
+  setCreationPresetValue: (presetStatusIndex: IntValue, presetStatusValue: IntValue) => void
 
   /**
    * Searches whether the specified Entity has a Unit Status with the given Config ID
@@ -5608,6 +5662,28 @@ interface EntityHelperMethodAliases {
   setSkillResource: (skillResourceConfigId: ConfigIdValue, targetValue: FloatValue) => void
 
   /**
+   * Available only in Classic Mode, increases the elemental energy for a specific character
+   *
+   * 增加角色元素能量: 仅经典模式可用，增加指定角色的元素能量
+   *
+   * @param increaseValue
+   *
+   * 增加值
+   */
+  addElementalEnergy: (increaseValue: FloatValue) => void
+
+  /**
+   * Available only in Classic Mode, sets the elemental energy for a specific character
+   *
+   * 设置角色元素能量: 仅经典模式可用，设置指定角色的元素能量
+   *
+   * @param elementalEnergy
+   *
+   * 元素能量
+   */
+  setElementalEnergy: (elementalEnergy: FloatValue) => void
+
+  /**
    * Player plays a one-shot 2D Sound Effect
    *
    * 玩家播放单次2D音效: 玩家播放单次2D音效
@@ -5936,6 +6012,10 @@ export function installEntityHelpers(): void {
   defineEntityHelperGetter('characters', (self) =>
     gsts.f.getAllCharacterEntitiesOfSpecifiedPlayer(self)
   )
+  defineEntityHelperGetter('activeCharacter', (self) =>
+    gsts.f.getActiveCharacterOfSpecifiedPlayer(self)
+  )
+  defineEntityHelperGetter('classicModeId', (self) => gsts.f.checkClassicModeCharacterId(self))
   defineEntityHelperGetter('character', (self) => {
     const list = gsts.f.getAllCharacterEntitiesOfSpecifiedPlayer(self)
     return gsts.f.getCorrespondingValueFromList(list, 0)
