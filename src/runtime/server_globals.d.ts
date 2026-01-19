@@ -52,7 +52,7 @@ declare global {
   function prefabId(value: PrefabIdValue): prefabId
   function configId(value: ConfigIdValue): configId
   function faction(value: FactionValue): faction
-  function entity(guidOrEntity: GuidValue | EntityValue): entity
+  function entity(guidOrEntity: GuidValue | EntityValue | null | 0): entity
 
   /**
    * Outputs a string to the log, generally used for logic checks and debugging; In the log, this string prints
@@ -305,6 +305,12 @@ declare global {
    *
    * GSTS 注: 该方法声明的字典无法进行修改, 需要修改时必须声明节点图变量字典
    */
+  function dict(value: null | 0): ReadonlyDict<never, never>
+  function dict<K extends DictKeyType, V extends DictValueType>(
+    keyType: K,
+    valueType: V,
+    value: null | 0
+  ): ReadonlyDict<K, V>
   function dict(obj: Record<string, FloatValue>): ReadonlyDict<'str', 'float'>
   function dict(obj: Record<string, IntValue>): ReadonlyDict<'str', 'int'>
   function dict(obj: Record<string, BoolValue>): ReadonlyDict<'str', 'bool'>
@@ -542,6 +548,7 @@ declare global {
   function dict<K extends DictKeyType, V extends DictValueType>(
     pairs: { k: RuntimeParameterValueTypeMap[K]; v: RuntimeParameterValueTypeMap[V] }[]
   ): ReadonlyDict<K, V>
+  function list(type: null | 0): never[]
   function list<
     T extends
       | 'bool'
@@ -554,7 +561,10 @@ declare global {
       | 'prefab_id'
       | 'str'
       | 'vec3'
-  >(type: T, items?: RuntimeParameterValueTypeMap[T][]): RuntimeReturnValueTypeMap[`${T}_list`]
+  >(
+    type: T,
+    items?: RuntimeParameterValueTypeMap[T][] | null | 0
+  ): RuntimeReturnValueTypeMap[`${T}_list`]
 
   /**
    * JS-like setTimeout for node graph timers, if not in node graph scope, use JS native setTimeout.

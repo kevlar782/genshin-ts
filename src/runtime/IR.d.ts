@@ -85,11 +85,19 @@ export type ClientNode = SimplifyDeep<
 export type Argument =
   | ConnectionArgument
   | {
-      [K in keyof ValueTypeMap]: {
+      [K in Exclude<keyof ValueTypeMap, 'dict'>]: {
         type: K
         value: ValueTypeMap[K]
       }
-    }[keyof ValueTypeMap]
+    }[Exclude<keyof ValueTypeMap, 'dict'>]
+  | {
+      type: 'dict'
+      value: ValueTypeMap['dict']
+      dict?: {
+        k: DictKeyType
+        v: DictValueType
+      }
+    }
   | null
 
 export interface ConnectionArgument {

@@ -586,6 +586,22 @@ export class generic extends value {
   getDictValueType(): DictValueType | undefined {
     return this.dictValueType
   }
+
+  // generic dict伪类型使用
+  getKeyType(): DictKeyType {
+    if (!this.dictKeyType) {
+      throw new Error('[error] dict(): use dict(keyType, valueType, 0) for typed dict placeholder')
+    }
+    return this.dictKeyType
+  }
+
+  // generic dict伪类型使用
+  getValueType(): DictValueType {
+    if (!this.dictValueType) {
+      throw new Error('[error] dict(): use dict(keyType, valueType, 0) for typed dict placeholder')
+    }
+    return this.dictValueType
+  }
 }
 
 // list在实际使用中会被伪装成T[], 由编译器处理, 通常用户不会直接接触list类型
@@ -630,15 +646,15 @@ export class list<K extends keyof ListableValueTypeMap = keyof ListableValueType
 export class listLiteral<
   K extends keyof ListableValueTypeMap = keyof ListableValueTypeMap
 > extends list<K> {
-  private items: RuntimeReturnValueTypeMap[K][]
+  private items: RuntimeReturnValueTypeMap[K][] | null
 
-  constructor(type: K, items: RuntimeReturnValueTypeMap[K][] = []) {
+  constructor(type: K, items: RuntimeReturnValueTypeMap[K][] | null = []) {
     super(type)
     this.items = items
     this.markLiteral()
   }
 
-  getItems(): RuntimeReturnValueTypeMap[K][] {
+  getItems(): RuntimeReturnValueTypeMap[K][] | null {
     return this.items
   }
 
@@ -824,7 +840,11 @@ export class dict<
   }
 
   override toIRLiteral(): Argument {
-    return null
+    return {
+      type: 'dict',
+      value: null,
+      dict: { k: this.keyType, v: this.valueType }
+    }
   }
 }
 

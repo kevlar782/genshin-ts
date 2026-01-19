@@ -24,6 +24,7 @@ import {
   FactionValue,
   float,
   FloatValue,
+  generic,
   guid,
   GuidValue,
   int,
@@ -187,6 +188,10 @@ function isIntLike(value: unknown): boolean {
 
 function isFloatLike(value: unknown): boolean {
   return value instanceof float || typeof value === 'number'
+}
+
+function isNullishPlaceholder(value: unknown): boolean {
+  return value === null || value === 0
 }
 
 function makeConvertibleFactory<T extends ConvertibleTo>(
@@ -363,10 +368,16 @@ export type ServerGlobalFactories = {
   prefabId: (v: PrefabIdValue) => prefabId
   configId: (v: ConfigIdValue) => configId
   faction: (v: FactionValue) => faction
-  entity: (guidOrEntity: GuidValue | EntityValue) => entity
-  dict: (<V extends DictValueType>(
-    obj: Record<string, RuntimeParameterValueTypeMap[V]>
-  ) => ReadonlyDict<'str', V>) &
+  entity: (guidOrEntity: GuidValue | EntityValue | null) => entity
+  dict: (<K extends DictKeyType, V extends DictValueType>(
+    keyType: K,
+    valueType: V,
+    value: null | 0
+  ) => ReadonlyDict<K, V>) &
+    ((value: null | 0) => ReadonlyDict) &
+    (<V extends DictValueType>(
+      obj: Record<string, RuntimeParameterValueTypeMap[V]>
+    ) => ReadonlyDict<'str', V>) &
     (<K extends DictKeyType, V extends DictValueType>(
       pairs: {
         k: RuntimeParameterValueTypeMap[K]
@@ -386,8 +397,8 @@ export type ServerGlobalFactories = {
       | 'str'
       | 'vec3'
   >(
-    type: T,
-    items?: RuntimeParameterValueTypeMap[T][]
+    type: T | null | 0,
+    items?: RuntimeParameterValueTypeMap[T][] | null | 0
   ) => RuntimeReturnValueTypeMap[`${T}_list`]
   print: (string: StrValue) => void
   send: (signalName: StrValue) => void
@@ -410,9 +421,12 @@ function makeFactories(): ServerGlobalFactories {
     prefabId: makeBasicFactory('prefab_id'),
     configId: makeBasicFactory('config_id'),
     faction: makeBasicFactory('faction'),
-    entity: (guidOrEntity: GuidValue | EntityValue) => {
+    entity: (guidOrEntity: GuidValue | EntityValue | null) => {
       if (guidOrEntity === undefined) {
-        throw new Error('[error] entity(): use entity(0) for type-only declaration')
+        throw new Error('[error] entity(): use entity(0) or entity(null) for type-only declaration')
+      }
+      if (guidOrEntity === null) {
+        return new entityLiteral(0)
       }
       if (guidOrEntity instanceof entity) return guidOrEntity
       const isGuidLiteral = typeof guidOrEntity === 'bigint' || typeof guidOrEntity === 'number'
@@ -428,7 +442,21 @@ function makeFactories(): ServerGlobalFactories {
       throw new Error('[error] entity(): unsupported input type')
     },
     // @ts-ignore allow
-    dict: (arg1: unknown) => {
+    dict: (arg1: unknown, arg2?: unknown, arg3?: unknown) => {
+      if (isNullishPlaceholder(arg1) && arg2 === undefined) {
+        // Use an untyped literal placeholder to emit `null`
+        const placeholder = new generic()
+        placeholder.markLiteral()
+        return placeholder as unknown as ReadonlyDict
+      }
+      if (typeof arg1 === 'string' && typeof arg2 === 'string') {
+        if (!isNullishPlaceholder(arg3)) {
+          throw new Error('[error] dict(): expected null/0 placeholder for typed empty dict')
+        }
+        const placeholder = new ReadonlyDict(arg1 as DictKeyType, arg2 as DictValueType)
+        placeholder.markLiteral()
+        return placeholder
+      }
       if (arg1 instanceof dict) return arg1
       if (arg1 instanceof dictLiteral) return arg1 as unknown as ReadonlyDict
       if (Array.isArray(arg1)) {
@@ -458,22 +486,32 @@ function makeFactories(): ServerGlobalFactories {
         | 'str'
         | 'vec3'
     >(
-      type: T,
-      items?: RuntimeParameterValueTypeMap[T][]
+      type: T | null | 0,
+      items?: RuntimeParameterValueTypeMap[T][] | null | 0
     ) => {
+      if (isNullishPlaceholder(type)) {
+        // Use an untyped literal placeholder to emit `null`
+        const placeholder = new generic()
+        placeholder.markLiteral()
+        return placeholder as unknown as RuntimeReturnValueTypeMap[`${T}_list`]
+      }
+      const listType = type as T
+      if (isNullishPlaceholder(items)) {
+        return new listLiteral(listType, null) as unknown as RuntimeReturnValueTypeMap[`${T}_list`]
+      }
       if (!inServerCtx()) {
         if (items === undefined) {
-          return new listLiteral(type, []) as unknown as RuntimeReturnValueTypeMap[`${T}_list`]
+          return new listLiteral(listType, []) as unknown as RuntimeReturnValueTypeMap[`${T}_list`]
         }
         if (z.instanceof(listClass).safeParse(items).success) {
-          if ((items as unknown as listClass).getConcreteType() === type) {
+          if ((items as unknown as listClass).getConcreteType() === listType) {
             return items as RuntimeReturnValueTypeMap[`${T}_list`]
           }
           throw new Error(`[error] list(): cannot convert list type`)
         }
         if (Array.isArray(items)) {
           return new listLiteral(
-            type,
+            listType,
             items as unknown as RuntimeReturnValueTypeMap[T][]
           ) as unknown as RuntimeReturnValueTypeMap[`${T}_list`]
         }
@@ -482,12 +520,12 @@ function makeFactories(): ServerGlobalFactories {
       if (items === undefined) {
         return gsts.f.initLocalVariable(
           // @ts-ignore allow
-          `${type}_list`
+          `${listType}_list`
           // @ts-ignore allow
         ).value as RuntimeReturnValueTypeMap[`${T}_list`]
       }
       if (z.instanceof(listClass).safeParse(items).success) {
-        if ((items as unknown as listClass).getConcreteType() === type) {
+        if ((items as unknown as listClass).getConcreteType() === listType) {
           return items as RuntimeReturnValueTypeMap[`${T}_list`]
         }
         throw new Error(`[error] list(): cannot convert list type`)
@@ -496,16 +534,16 @@ function makeFactories(): ServerGlobalFactories {
         // @ts-ignore allow
         return gsts.f.initLocalVariable(
           // @ts-ignore allow
-          `${type}_list`
+          `${listType}_list`
           // @ts-ignore allow
         ).value as RuntimeReturnValueTypeMap[`${T}_list`]
       }
       // @ts-ignore allow
       return gsts.f.initLocalVariable(
         // @ts-ignore allow
-        `${type}_list`,
+        `${listType}_list`,
         // @ts-ignore allow
-        gsts.f.assemblyList(items, type)
+        gsts.f.assemblyList(items, listType)
         // @ts-ignore allow
       ).value as RuntimeReturnValueTypeMap[`${T}_list`]
     },

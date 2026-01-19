@@ -155,6 +155,12 @@ export function parseValue(v: any, type: keyof (ListableValueTypeMap & SpecialVa
 // @ts-ignore allow
 export function parseValue(v: any, type: keyof LiteralValueListTypeMap): list
 export function parseValue(v: any, type: ValueType) {
+  if (z.instanceof(generic).safeParse(v).success) {
+    const metadata = (v as value).getMetadata()
+    if (metadata?.kind === 'literal') {
+      if (type === 'dict' || type.endsWith('_list')) return v as value
+    }
+  }
   switch (type) {
     case 'bool': {
       if (z.instanceof(bool).safeParse(v).success) {
@@ -445,28 +451,45 @@ function matchTypes<T extends keyof (ListableValueTypeMap & SpecialValueTypeMap)
       // ignore
     }
   }
-  throw new Error(
-    `Generic parameter not matched: ${values
-      .map((v) => {
-        if (z.instanceof(value).safeParse(v).success) {
-          const metadata = (v as value).getMetadata()
-          if (!metadata) return JSON.stringify(v)
+  const formatValue = (v: unknown) => {
+    if (z.instanceof(value).safeParse(v).success) {
+      const metadata = (v as value).getMetadata()
+      if (!metadata) return JSON.stringify(v)
 
-          if (metadata.kind === 'literal') {
-            return JSON.stringify((v as value).toIRLiteral())
+      if (metadata.kind === 'literal') {
+        if (z.instanceof(generic).safeParse(v).success) {
+          const genericValue = v as generic
+          const concreteType = genericValue.getConcreteType()
+          if (!concreteType) return '<untyped placeholder>'
+          if (concreteType === 'dict') {
+            const keyType = genericValue.getDictKeyType()
+            const valueType = genericValue.getDictValueType()
+            if (keyType && valueType) return `dict<${keyType}, ${valueType}> placeholder`
           }
-          return JSON.stringify({
-            ...metadata,
-            record: {
-              ...metadata.record,
-              args: undefined
-            }
-          })
+          return `${concreteType} placeholder`
         }
-        return JSON.stringify(v)
+        return JSON.stringify((v as value).toIRLiteral())
+      }
+      return JSON.stringify({
+        ...metadata,
+        record: {
+          ...metadata.record,
+          args: undefined
+        }
       })
-      .join(', ')}`
+    }
+    return JSON.stringify(v)
+  }
+  const hasUntypedPlaceholder = values.some(
+    (v) =>
+      z.instanceof(generic).safeParse(v).success &&
+      (v as generic).getMetadata()?.kind === 'literal' &&
+      !(v as generic).getConcreteType()
   )
+  const hint = hasUntypedPlaceholder
+    ? " Hint: use list('type', 0) or dict('k', 'v', 0) to declare a typed placeholder."
+    : ''
+  throw new Error(`Generic parameter not matched: ${values.map(formatValue).join(', ')}${hint}`)
 }
 
 function isPrecomputeEnabled(): boolean {
@@ -2580,11 +2603,17 @@ export class ServerExecutionFlowFunctions {
     valueList: RuntimeParameterValueTypeMap[V][]
   ): ReadonlyDict<K, V> {
     const keyListConcreteType = (keyList as unknown as list<K>).getConcreteType()
+    if (!keyListConcreteType) {
+      throw new Error("[error] createDictionary(): keyList must be typed, use list('type', 0)")
+    }
     const keyListObj = parseValue(
       keyList,
       (keyListConcreteType + '_list') as keyof LiteralValueListTypeMap
     )
     const valueListConcreteType = (valueList as unknown as list<V>).getConcreteType()
+    if (!valueListConcreteType) {
+      throw new Error("[error] createDictionary(): valueList must be typed, use list('type', 0)")
+    }
     const valueListObj = parseValue(
       valueList,
       (valueListConcreteType + '_list') as keyof LiteralValueListTypeMap

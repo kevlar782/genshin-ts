@@ -154,12 +154,12 @@ function parseScalarLiteral(name: string, raw: unknown): ScalarLiteral | null {
     const guid = getDeclaredEntityGuid(raw)
     if (guid === null) {
       throw new Error(
-        `[error] ${name}: entity literal must be created by entity(0) and is type-only`
+        `[error] ${name}: entity literal must be created by entity(0)/entity(null) and is type-only`
       )
     }
     if (Number(guid) !== 0) {
       throw new Error(
-        `[error] ${name}: entity literal must be entity(0) (type-only, no initial value)`
+        `[error] ${name}: entity literal must be entity(0)/entity(null) (type-only, no initial value)`
       )
     }
     return { type: 'entity' }
@@ -169,7 +169,11 @@ function parseScalarLiteral(name: string, raw: unknown): ScalarLiteral | null {
 
 function parseListItems(raw: unknown): { items: unknown[]; explicitType?: ScalarType } | null {
   if (raw instanceof listLiteral) {
-    return { items: raw.getItems() as unknown[], explicitType: raw.getConcreteType() as ScalarType }
+    const items = raw.getItems()
+    return {
+      items: (items ?? []) as unknown[],
+      explicitType: raw.getConcreteType() as ScalarType
+    }
   }
   if (raw instanceof list) {
     return { items: [], explicitType: raw.getConcreteType() as ScalarType }
@@ -266,7 +270,7 @@ function parseDictKey(name: string, raw: unknown): { type: DictKeyType; value: u
     const guid = getDeclaredEntityGuid(raw)
     if (guid === null || Number(guid) !== 0) {
       throw new Error(
-        `[error] ${name}: dict entity key must be entity(0) (type-only, no initial value)`
+        `[error] ${name}: dict entity key must be entity(0)/entity(null) (type-only, no initial value)`
       )
     }
     return { type: 'entity', value: raw }

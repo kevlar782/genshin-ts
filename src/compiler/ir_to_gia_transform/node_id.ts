@@ -1,4 +1,10 @@
-import type { Argument, ConnectionArgument, IRDocument, ValueType, Variable } from '../../runtime/IR.js'
+import type {
+  Argument,
+  ConnectionArgument,
+  IRDocument,
+  ValueType,
+  Variable
+} from '../../runtime/IR.js'
 import type { DictKeyType, DictValueType } from '../../runtime/value.js'
 import {
   getEnumIdLowerMap,
@@ -147,7 +153,12 @@ function lookupTypedNodeId(
 function connTypeFromArgument(arg: Argument | null | undefined): ConnTypeInfo | undefined {
   if (!arg) return undefined
   if (isConnectionArgument(arg)) return requireConnType(arg.value)
-  if (arg.type === 'dict') throw new Error(`[error] dict literal args are not supported`)
+  if (arg.type === 'dict') {
+    if (!arg.dict) {
+      throw new Error(`[error] dict literal args must include "dict" type info`)
+    }
+    return { type: 'dict', dict: arg.dict }
+  }
   // literal enum/enumeration doesn't carry the enum "kind" here; only connections do.
   if (arg.type === 'enum' || arg.type === 'enumeration') return undefined
   return { type: arg.type }

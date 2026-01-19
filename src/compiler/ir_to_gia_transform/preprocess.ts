@@ -16,6 +16,7 @@ export const expandListLiterals = (input: IRDocument) => {
       if (!arg || arg.type === 'conn') continue
       if (!arg.type.endsWith('_list')) continue
       if (nodeType === 'assembly_list') continue
+      if (arg.value == null) continue
 
       const elemType = elementValueTypeFromListValueType(arg.type)!
 

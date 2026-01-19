@@ -88,6 +88,12 @@ export function setLiteralArgValue(
   argType: string,
   value: unknown
 ) {
+  if (argType.endsWith('_list') && value == null) {
+    return
+  }
+  if (argType === 'dict' && value == null) {
+    return
+  }
   if (argType === 'entity' && value === null && nodeType === 'get_local_variable') {
     const pin = ensureInputPin(giaNode, pinIndex)
     pin.setType({ t: 'b', b: 'Ety' })
